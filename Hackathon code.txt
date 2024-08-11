@@ -1,0 +1,137 @@
+import java.util.*;
+
+public class RetailManagementSystem {
+    static Map<String, String> mp1 = new HashMap<>();
+    static Map<String, Float> mp2 = new HashMap<>();
+    static Map<String, Integer> mp3 = new HashMap<>();
+    static Map<String, Float> msold = new HashMap<>();
+    static Map<String, Integer> soldp = new HashMap<>();
+    static Scanner scanner = new Scanner(System.in);
+
+    static void ADD() {
+        System.out.print("Enter Product ID: ");
+        String pid = scanner.nextLine();
+        System.out.print("Enter Product Name: ");
+        String pname = scanner.nextLine();
+        System.out.print("Enter Product Price: ");
+        float pprice = scanner.nextFloat();
+        System.out.print("Enter Product Quantity: ");
+        int pq = scanner.nextInt();
+        scanner.nextLine(); 
+
+        mp1.put(pid, pname);
+        mp2.put(pid, pprice);
+        mp3.put(pid, pq);
+
+        System.out.println("Product " + mp1.get(pid) + " added successfully.");
+    }
+
+    static void UPDATE() {
+        System.out.print("Enter the Product ID to be updated: ");
+        String pid = scanner.nextLine();
+        if (mp3.containsKey(pid)) {
+            System.out.print("Enter the Quantity to be added: ");
+            int pq = scanner.nextInt();
+            scanner.nextLine(); // consume newline
+            mp3.put(pid, mp3.get(pid) + pq);
+            System.out.println("Product stock updated successfully.");
+        } else {
+            System.out.println("Enter the correct product ID.");
+        }
+    }
+
+    static void Process() {
+        System.out.print("Enter the Product ID to be processed: ");
+        String pid = scanner.nextLine();
+
+        if (mp3.containsKey(pid)) {
+            System.out.print("Enter quantity to be sold: ");
+            int qs = scanner.nextInt();
+            scanner.nextLine(); // consume newline
+
+            if (qs <= mp3.get(pid)) {
+                soldp.put(pid, soldp.getOrDefault(pid, 0) + qs);
+                msold.put(pid, msold.getOrDefault(pid, 0f) + mp2.get(pid) * qs);
+                mp3.put(pid, mp3.get(pid) - qs);
+                System.out.println("Sales processed for " + qs + " units of " + mp1.get(pid) + ".");
+            } else {
+                System.out.println("Insufficient stock.");
+            }
+        } else {
+            System.out.println("Enter the correct product ID.");
+        }
+    }
+
+    static void Display() {
+        System.out.print("Enter the Product ID: ");
+        String pid = scanner.nextLine();
+
+        if (mp3.containsKey(pid)) {
+            System.out.println("Product (ID: " + pid + ", Name: " + mp1.get(pid) + ", Price: " + mp2.get(pid) + ", Quantity: " + mp3.get(pid) + ")");
+        } else {
+            System.out.println("Enter the correct product ID.");
+        }
+    }
+
+    static void SalesReport() {
+        float rev = 0;
+        for (float value : msold.values()) {
+            rev += value;
+        }
+        System.out.println("\nTotal revenue: " + rev);
+
+        int maxi = Integer.MIN_VALUE;
+        String pid = "";
+        for (Map.Entry<String, Integer> entry : soldp.entrySet()) {
+            if (entry.getValue() > maxi) {
+                maxi = entry.getValue();
+                pid = entry.getKey();
+            }
+        }
+
+        if (!pid.isEmpty()) {
+            System.out.println("\nMost sold product: " + mp1.get(pid) + " (" + maxi + " units)");
+        } else {
+            System.out.println("\nNo sales data available.");
+        }
+    }
+
+    public static void main(String[] args) {
+        while (true) {
+            System.out.println("Retail Management System Menu:");
+            System.out.println("1. Add a new product");
+            System.out.println("2. Update product stock");
+            System.out.println("3. Process a sale");
+            System.out.println("4. Display product details");
+            System.out.println("5. Generate sales report");
+            System.out.println("6. Close the system");
+            System.out.print("Enter your choice: ");
+
+            int ch = scanner.nextInt();
+            scanner.nextLine(); // consume newline
+            switch (ch) {
+                case 1:
+                    ADD();
+                    break;
+                case 2:
+                    UPDATE();
+                    break;
+                case 3:
+                    Process();
+                    break;
+                case 4:
+                    Display();
+                    break;
+                case 5:
+                    SalesReport();
+                    break;
+                case 6:
+                    System.out.println("Exiting the system.");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+}
+
